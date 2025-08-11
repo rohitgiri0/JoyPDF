@@ -78,9 +78,7 @@ def analyze_resume(resume_text, operation,job_description=None):
         """
         if job_description:
             base_prompt += f"""
-            Additionally, compare this resume to the following job description:
-            
-            Job Description:
+            Additionally:
             {job_description}
             """
     else:
@@ -94,12 +92,9 @@ def analyze_resume(resume_text, operation,job_description=None):
 
         if job_description:
             base_prompt += f"""
-            Additionally, compare this resume to the following job description:
+            Additional, description:
             
-            Job Description:
             {job_description}
-            
-            Highlight the strengths and weaknesses of the applicant in relation to the specified job requirements.
             """
 
     response = client.models.generate_content(
@@ -129,10 +124,11 @@ else:
 st.markdown("<div style= 'padding-top: 10px;'></div>", unsafe_allow_html=True)
 if uploaded_file:
     operation=st.selectbox("what would you like to do: ",['evaluate resume','summarize pdf'])
-    # save uploaded file locally for processing
+    # saving uploaded document loacally
     with open("uploaded_resume.pdf", "wb") as f:
         f.write(uploaded_file.getbuffer())
-    # extract text from PDF
+        
+    # extracting text
     resume_text = extract_pdf_data(uploaded_file)
 
     if st.button("Analyze"):
