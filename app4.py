@@ -2,10 +2,10 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 import google.generativeai as genai
-import pytesseract
+# import pytesseract
 import fitz
-from PIL import Image
-import io
+# from PIL import Image
+# import io
 from fpdf import FPDF
 
 load_dotenv()
@@ -32,21 +32,21 @@ def read_pdf(file):
         pass
     return all_text.strip()
 
-def read_ocr(file):
-    pdf_bytes = file.read()
-    doc = fitz.open(stream=pdf_bytes, filetype='pdf')
-    full_text = ''
-    for page_num in range(len(doc)):
-        pix = doc[page_num].get_pixmap(dpi=300)
-        img = Image.open(io.BytesIO(pix.tobytes("png")))
-        text = pytesseract.image_to_string(img)
-        full_text += text + "\n"
-    doc.close()
-    try:
-        file.seek(0)
-    except Exception:
-        pass
-    return full_text.strip()
+# def read_ocr(file):
+#     pdf_bytes = file.read()
+#     doc = fitz.open(stream=pdf_bytes, filetype='pdf')
+#     full_text = ''
+#     for page_num in range(len(doc)):
+#         pix = doc[page_num].get_pixmap(dpi=300)
+#         img = Image.open(io.BytesIO(pix.tobytes("png")))
+#         text = pytesseract.image_to_string(img)
+#         full_text += text + "\n"
+#     doc.close()
+#     try:
+#         file.seek(0)
+#     except Exception:
+#         pass
+#     return full_text.strip()
 
 def extract_pdf_data(file):
     pdf_bytes = file.read()
@@ -60,7 +60,7 @@ def extract_pdf_data(file):
     if has_text:
         return read_pdf(file)
     else:
-        return read_ocr(file)
+        return st.error("Can Not Process OCR PDFs")
 
 def analyze_resume(resume_text, operation, job_description=None):
     if not resume_text:
