@@ -149,7 +149,7 @@ def create_pdf(text):
             pdf.ln()
     return pdf.output(dest='S').encode('latin1')
 
-st.set_page_config(page_title="Resume Analyzer",page_icon='📄', layout="wide")
+st.set_page_config(page_title="JoyPDF",page_icon='📄', layout="wide")
 st.title("AI PDF Analyzer")
 st.write("Analyze your resume and summarize long pdfs with AI")
 
