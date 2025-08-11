@@ -106,8 +106,8 @@ def analyze_resume(resume_text, operation,job_description=None):
     return analysis
 
 st.set_page_config(page_title="Resume Analyzer", layout="wide")
-st.title("AI Resume Analyzer")
-st.write("Analyze your resume and match it with job descriptions using Google Gemini AI.")
+st.title("AI PDF Analyzer")
+st.write("Analyze your resume and summarize long pdfs with Ai")
 
 col1 , col2 = st.columns(2)
 with col1:
