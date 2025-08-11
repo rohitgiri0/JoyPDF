@@ -157,7 +157,7 @@ col1, col2 = st.columns(2)
 with col1:
     uploaded_file = st.file_uploader("Upload your resume (PDF)", type=["pdf"])
 with col2:
-    job_description = st.text_area("Enter Job Description:", placeholder="Paste the additional description here...")
+    job_description = st.text_area("More context:", placeholder="Paste the additional description here...")
 
 if uploaded_file is None:
     st.warning("Please upload a file in PDF format.")
