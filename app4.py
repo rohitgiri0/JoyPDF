@@ -160,8 +160,11 @@ else:
     st.success("PDF uploaded successfully!")
 
 if uploaded_file:
-    operation = st.selectbox("What would you like to do:", ['summarize pdf','evaluate resume'])
-    resume_text = extract_pdf_data(uploaded_file)
+    try:
+        operation = st.selectbox("What would you like to do:", ['summarize pdf','evaluate resume'])
+        resume_text = extract_pdf_data(uploaded_file)
+    except Exception:
+        st.error("Can Not process OCR pdfs")
 else:
     resume_text = ""
 
