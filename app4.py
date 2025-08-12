@@ -89,7 +89,7 @@ Here is the PDF text:
 """
         if job_description:
             base_prompt += f"\nAdditional context for the summary:\n{job_description}\n"
-    else:
+    elif operation=='evaluate resume':
         base_prompt = f"""
 You are an experienced HR with technical experience. Your task is to review the provided resume and:
 - Evaluate alignment to the chosen role.
@@ -102,6 +102,23 @@ Resume:
 """
         if job_description:
             base_prompt += f"\nAdditional job description/context:\n{job_description}\n"
+    elif operation=='Solve Assignment':
+        base_prompt = f"""
+        You are a knowledgeable and detail-oriented academic assistant.
+        Your task is to carefully read the provided assignment text and produce clear, complete, and well-structured solutions.
+
+        Rules:
+        - Answer all parts of the assignment thoroughly.
+        - Use clear formatting: headings, bullet points, or numbered lists where applicable.
+        - Keep the tone formal and academic.
+
+        Assignment Text:
+        {resume_text}
+        """
+        if job_description:
+            base_prompt += f"\nAdditional information for solutions\n{job_description}\n"
+    else:
+        st.warning("please choose a valid operation!")
     try:
         model = genai.GenerativeModel("gemini-2.5-flash")
         response = model.generate_content(base_prompt)
@@ -161,7 +178,7 @@ else:
 
 if uploaded_file:
     try:
-        operation = st.selectbox("What would you like to do:", ['summarize pdf','evaluate resume'])
+        operation = st.selectbox("What would you like to do:", ['summarize pdf','evaluate resume','Solve Assignment'])
         resume_text = extract_pdf_data(uploaded_file)
     except Exception:
         resume_text= "I can not process OCR(image scanned pdfs)"
