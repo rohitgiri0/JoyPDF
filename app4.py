@@ -2,22 +2,46 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 import google.generativeai as genai
-# import pytesseract
+import pytesseract
 import fitz
-# from PIL import Image
-# import io
-from fpdf import FPDF
+from PIL import Image
+import io
+import markdown
+from xhtml2pdf import pisa
 
 load_dotenv()
 key = os.getenv("GEMINI_API_KEY")
 if not key and "GEMINI_API_KEY" in st.secrets:
     key = st.secrets["GEMINI_API_KEY"]
 
-if key:
+if not key:
+    st.error("GEMINI_API_KEY is not set. Please set the API key to use this app.")
+else:
     try:
         genai.configure(api_key=key)
     except Exception:
         pass
+
+@st.cache_data
+def extract_pdf_data(file):
+    try:
+        pdf_bytes = file.read()
+        doc = fitz.open(stream=pdf_bytes, filetype='pdf')
+        has_text = any(page.get_text().strip() for page in doc)
+        doc.close()
+        try:
+            file.seek(0)
+        except Exception:
+            pass
+        if has_text:
+            return read_pdf(file)
+        else:
+            return read_ocr(file)
+            # return st.error("Can Not Process OCR PDFs")
+    except fitz.FileDataError:
+        return "Error: Invalid or corrupted PDF file."
+    except Exception as e:
+        return f"Error processing PDF: {e}"
 
 def read_pdf(file):
     pdf_bytes = file.read()
@@ -32,35 +56,21 @@ def read_pdf(file):
         pass
     return all_text.strip()
 
-# def read_ocr(file):
-#     pdf_bytes = file.read()
-#     doc = fitz.open(stream=pdf_bytes, filetype='pdf')
-#     full_text = ''
-#     for page_num in range(len(doc)):
-#         pix = doc[page_num].get_pixmap(dpi=300)
-#         img = Image.open(io.BytesIO(pix.tobytes("png")))
-#         text = pytesseract.image_to_string(img)
-#         full_text += text + "\n"
-#     doc.close()
-#     try:
-#         file.seek(0)
-#     except Exception:
-#         pass
-#     return full_text.strip()
-
-def extract_pdf_data(file):
+def read_ocr(file):
     pdf_bytes = file.read()
     doc = fitz.open(stream=pdf_bytes, filetype='pdf')
-    has_text = any(page.get_text().strip() for page in doc)
+    full_text = ''
+    for page_num in range(len(doc)):
+        pix = doc[page_num].get_pixmap(dpi=300)
+        img = Image.open(io.BytesIO(pix.tobytes("png")))
+        text = pytesseract.image_to_string(img)
+        full_text += text + "\n"
     doc.close()
     try:
         file.seek(0)
     except Exception:
         pass
-    if has_text:
-        return read_pdf(file)
-    else:
-        return st.error("Can Not Process OCR PDFs")
+    return full_text.strip()
 
 def analyze_resume(resume_text, operation, job_description=None):
     if not resume_text:
@@ -100,54 +110,40 @@ Resume:
     except Exception as e:
         return f"[Error calling Gemini API: {e}]"
 
-def create_pdf(text):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_auto_page_break(True, margin=15)
-    pdf.set_font("Arial", size=12)
-    for line in text.split("\n"):
-        stripped = line.strip()
-        if stripped.startswith("**") and stripped.endswith("**") and len(stripped) > 4:
-            pdf.set_font("Arial", "B", 12)
-            pdf.multi_cell(0, 8, stripped.strip("*"))
-            pdf.set_font("Arial", "", 12)
-        else:
-            parts = []
-            temp = stripped
-            while temp:
-                idx_double = temp.find("**")
-                idx_single = temp.find("*")
-                if idx_double == -1 and idx_single == -1:
-                    parts.append((temp, False))
-                    break
-                if idx_double != -1 and (idx_single == -1 or idx_double < idx_single):
-                    if idx_double > 0:
-                        parts.append((temp[:idx_double], False))
-                    temp = temp[idx_double+2:]
-                    end_idx = temp.find("**")
-                    if end_idx == -1:
-                        parts.append(("**" + temp, False))
-                        break
-                    parts.append((temp[:end_idx], True))
-                    temp = temp[end_idx+2:]
-                else:
-                    if idx_single > 0:
-                        parts.append((temp[:idx_single], False))
-                    temp = temp[idx_single+1:]
-                    end_idx = temp.find("*")
-                    if end_idx == -1:
-                        parts.append(("*" + temp, False))
-                        break
-                    parts.append((temp[:end_idx], True))
-                    temp = temp[end_idx+1:]
-            for text_part, is_bold in parts:
-                if is_bold:
-                    pdf.set_font("Arial", "B", 12)
-                else:
-                    pdf.set_font("Arial", "", 12)
-                pdf.write(8, text_part)
-            pdf.ln()
-    return pdf.output(dest='S').encode('latin1')
+from io import BytesIO
+
+def create_pdf(md_text):
+    html_content = markdown.markdown(md_text)
+
+    # wrapped markdown in html for better readability
+    
+    html_full = f"""
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; font-size: 16px; }}
+        h1, h2, h3 {{ color: #2C3E50; }}
+        ul {{ margin-left: 20px; }}
+        li {{ margin-bottom: 8px; }}
+        strong {{ color: #34495E; font-weight: bold; }}
+    </style>
+    </head>
+    <body>
+        {html_content}
+    </body>
+    </html>
+    """
+
+    # Generating pdf into memory
+    pdf_buffer = BytesIO()
+    try:
+        pisa_status = pisa.CreatePDF(html_full, dest=pdf_buffer)
+        if pisa_status.err:
+            return None
+        return pdf_buffer.getvalue()
+    except Exception:
+        return None
 
 st.set_page_config(page_title="JoyPDF",page_icon='📄', layout="wide")
 st.title("AI PDF Analyzer")
@@ -180,6 +176,7 @@ if st.button('Analyze'):
         with st.spinner('Analyzing...'):
             analysis = analyze_resume(resume_text, operation, job_description)
             st.write(analysis)
+            print(analysis)
             st.session_state['summary_text'] = analysis
             if analysis.startswith('[Error calling Gemini'):
                 st.error(analysis)
@@ -193,11 +190,14 @@ if st.button('Generate PDF'):
     text_to_pdf = st.session_state.get('summary_text', '')
     if text_to_pdf.strip():
         pdf_bytes = create_pdf(text_to_pdf)
-        st.download_button(
-            label='📄 Download Summary as PDF',
-            data=pdf_bytes,
-            file_name='summary.pdf',
-            mime='application/pdf'
-        )
+        if pdf_bytes is None:
+            st.error('Failed to generate PDF. Please try again.')
+        else:
+            st.download_button(
+                label='📄 Download Summary as PDF',
+                data=pdf_bytes,
+                file_name='summary.pdf',
+                mime='application/pdf'
+            )
     else:
         st.warning('Please enter some text to generate a PDF.')
