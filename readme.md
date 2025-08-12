@@ -1,31 +1,83 @@
-Here's a summary of the provided document:
 
-This document is a resume for **Mohit Giri**, a 22-year-old BCA graduate.
 
-**Key Highlights:**
-*   **Education:** Bachelor of Computer Applications (2022-2025).
-*   **Current Focus:** Learning Data Structures and Algorithms (DSA).
-*   **Interests:** Content creation (gaming, lifestyle) and finance-related concepts (investments).
-*   **Soft Skills:** Leadership, Collaboration, Innovation, Communication, Problem Solving, Teamwork.
-*   **Technical Skills:**
-    *   **Frontend:** HTML, CSS, React.js
-    *   **Backend:** NODE.JS, Express.js, Java, JavaScript, RestAPI, MVC
-    *   **Databases:** MongoDB, MySQL
-    *   **Tools/Other:** Git, GitHub, Vscode, Gemini API, Weather API
+# JOYPDF
 
-**Projects:**
-*   **Property Listing Full-stack:**
-    *   Features a 3D map and 5-day weather forecast for listings.
-    *   Includes user authentication/authorization.
-    *   Uses Rest APIs, MVC architecture, and MongoDB Atlas.
-*   **CodeCritic (AI-API) Full-Stack:**
-    *   Provides optimized code suggestions and identifies errors.
-    *   Built with React.js, Rest APIs, MVC, and Gemini API.
-*   **React Weather App:**
-    *   Displays weather information for a given location, with dynamic photo changes based on conditions.
-    *   Built with React.js and a Weather API.
+JOYPDF is a Streamlit web application that allows users to upload PDF documents, analyze their contents using Google Gemini AI, and generate concise summaries in professionally-styled PDF format. The app streamlines the process of extracting insights from PDFs and presenting them in a clean, readable way.
 
-**Contact Information:**
-*   Phone: 9462090790
-*   Email: mohitgiri912@gmail.com
-*   Location: Hanuman Nagar, Pal Balaji, Jodhpur
+## Features
+
+- **PDF Upload:** Easily upload PDF files for analysis.
+- **AI-Based Text Analysis:** Utilizes Google Gemini AI for advanced document understanding and summarization.
+- **Markdown-to-PDF Conversion:** Converts AI-generated summaries (in Markdown) into downloadable PDF files.
+- **Professional PDF Styling:** Outputs summaries in clean, professional PDF layouts.
+- **Robust Error Handling:** Handles file errors, API failures, and invalid inputs gracefully.
+
+## Tech Stack
+
+- **Python**
+- **Streamlit**
+- **Google Generative AI API (Gemini)**
+- **PyMuPDF**
+- **markdown**
+- **xhtml2pdf**
+
+## Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/JOYPDF.git
+   cd JOYPDF
+   ```
+2. **Set up a virtual environment (recommended):**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Configure API Key:**
+   - Create a `.env` file in the project root.
+   - Add your Gemini API key:
+     ```
+     GEMINI_API_KEY=your_gemini_api_key_here
+     ```
+
+## Usage
+
+1. **Run the Streamlit app:**
+   ```bash
+   streamlit run app4.py
+   ```
+2. **Interact with the App:**
+   - Upload a PDF file via the web interface.
+   - The app will analyze the content using Gemini AI.
+   - View and download the AI-generated summary as a PDF.
+
+## Deployment
+
+- The app can be deployed to [Streamlit Cloud](https://streamlit.io/cloud).
+- Ensure that `requirements.txt` contains only the necessary dependencies for a minimal, fast deployment.
+- Set up environment variables (e.g., `GEMINI_API_KEY`) in the Streamlit Cloud dashboard.
+
+## Project Structure
+
+Example file structure:
+```
+JOYPDF/
+├── app4.py
+├── requirements.txt
+├── readme.md
+├── .env
+|── ...
+```
+
+## Contributing
+
+Contributions are welcome! To contribute:
+1. Fork the repository.
+2. Create a new branch: `git checkout -b feature/your-feature-name`
+3. Make your changes and commit them.
+4. Push to your fork and open a pull request.
+
