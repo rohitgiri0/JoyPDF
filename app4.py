@@ -164,7 +164,7 @@ if uploaded_file:
         operation = st.selectbox("What would you like to do:", ['summarize pdf','evaluate resume'])
         resume_text = extract_pdf_data(uploaded_file)
     except Exception:
-        resume_text= "I already said I can not process OCR(image scanned pdfs) you dumb?"
+        resume_text= "I can not process OCR(image scanned pdfs)"
         st.error("Can Not process OCR pdfs")
 else:
     resume_text = ""
