@@ -84,6 +84,20 @@ Rules:
 - Preserve important names, dates, numbers, or facts.
 - Remove any irrelevant or repetitive content.
 
+Formatting Rules (Important for PDF conversion):
+- Use clear headings (with ### if needed).
+- Use proper line breaks (blank line between sections).
+- Use bullet points (- or *) for lists.
+- Avoid unnecessary indentation or tabs.
+- Keep formatting consistent and clean for PDF output.
+
+Additional Markdown Rules (to avoid formatting issues):
+- Always use "-" or "*" only for bullet points, not for emphasis unless really needed.
+- For emphasis, use **bold** or _italics_ properly instead of mixing bullets and inline asterisks.
+- Format tables clearly using Markdown table syntax with | and ---.
+- Do not use nested asterisks that can confuse Markdown.
+- Keep structure clean so it converts well to PDF.
+
 Here is the PDF text:
 {resume_text}
 """
@@ -96,6 +110,20 @@ You are an experienced HR with technical experience. Your task is to review the 
 - List existing skills and suggest missing/important skills.
 - Highlight strengths and weaknesses.
 - Provide a short rating out of 10.
+
+Formatting Rules (Important for PDF conversion):
+- Use clear headings (with ### if needed).
+- Use proper line breaks (blank line between sections).
+- Use bullet points (- or *) for lists.
+- Avoid unnecessary indentation or tabs.
+- Keep formatting consistent and clean for PDF output.
+
+Additional Markdown Rules (to avoid formatting issues):
+- Always use "-" or "*" only for bullet points, not for emphasis unless really needed.
+- For emphasis, use **bold** or _italics_ properly instead of mixing bullets and inline asterisks.
+- Format tables clearly using Markdown table syntax with | and ---.
+- Do not use nested asterisks that can confuse Markdown.
+- Keep structure clean so it converts well to PDF.
 
 Resume:
 {resume_text}
@@ -111,6 +139,20 @@ Resume:
         - Answer all parts of the assignment thoroughly.
         - Use clear formatting: headings, bullet points, or numbered lists where applicable.
         - Keep the tone formal and academic.
+
+        Formatting Rules (Important for PDF conversion):
+        - Use clear headings (with ### if needed).
+        - Use proper line breaks (blank line between sections).
+        - Use bullet points (- or *) for lists.
+        - Avoid unnecessary indentation or tabs.
+        - Keep formatting consistent and clean for PDF output.
+
+        Additional Markdown Rules (to avoid formatting issues):
+        - Always use "-" or "*" only for bullet points, not for emphasis unless really needed.
+        - For emphasis, use **bold** or _italics_ properly instead of mixing bullets and inline asterisks.
+        - Format tables clearly using Markdown table syntax with | and ---.
+        - Do not use nested asterisks that can confuse Markdown.
+        - Keep structure clean so it converts well to PDF.
 
         Assignment Text:
         {resume_text}
@@ -132,6 +174,23 @@ Resume:
 	•	Highlight only the key terms or formulas (keep it minimal).
 	4.	After listing questions, give a summary of the most crucial topics that should be revised first.
 	5.	Make sure the answers are clear, student-friendly, and quick to revise.
+    6. 
+
+    7. Remember, the exam is not very hard, so keep the questions simple, direct, and not overly complicated.
+
+    Formatting Rules (Important for PDF conversion):
+    - Use clear headings (with ### if needed).
+    - Use proper line breaks (blank line between sections).
+    - Use bullet points (- or *) for lists.
+    - Avoid unnecessary indentation or tabs.
+    - Keep formatting consistent and clean for PDF output.
+    
+    Additional Markdown Rules (to avoid formatting issues):
+    - Always use "-" or "*" only for bullet points, not for emphasis unless really needed.
+    - For emphasis, use **bold** or _italics_ properly instead of mixing bullets and inline asterisks.
+    - Format tables clearly using Markdown table syntax with | and ---.
+    - Do not use nested asterisks that can confuse Markdown.
+    - Keep structure clean so it converts well to PDF.
         
         Notes: 
 {resume_text}
@@ -151,7 +210,7 @@ Resume:
 from io import BytesIO
 
 def create_pdf(md_text):
-    html_content = markdown.markdown(md_text)
+    html_content = markdown.markdown(md_text, extensions=["tables"])
 
     # wrapped markdown in html for better readability
     
@@ -165,6 +224,9 @@ def create_pdf(md_text):
         ul {{ margin-left: 20px; }}
         li {{ margin-bottom: 8px; }}
         strong {{ color: #34495E; font-weight: bold; }}
+        table {{ border-collapse: collapse; width: 100%; margin: 15px 0; }}
+        th, td {{ border: 1px solid #333; padding: 8px; text-align: left; }}
+        th {{ background-color: #f2f2f2; }}
     </style>
     </head>
     <body>
@@ -217,7 +279,7 @@ if st.button('Analyze'):
     else:
         with st.spinner('Analyzing...'):
             analysis = analyze_resume(resume_text, operation, job_description)
-            st.write(analysis)
+            st.markdown(analysis)
             st.session_state['summary_text'] = analysis
             if analysis.startswith('[Error calling Gemini'):
                 st.error(analysis)
