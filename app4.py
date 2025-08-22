@@ -117,6 +117,28 @@ Resume:
         """
         if job_description:
             base_prompt += f"\nAdditional information for solutions\n{job_description}\n"
+    
+    elif operation=='Extract Questions':
+        base_prompt=f"""
+    You are an expert teacher preparing students for exams. I will provide you with a PDF file containing study material (notes, chapters, or previous year papers). Your task is to carefully read the PDF and extract the most important questions that are very likely to appear in an exam.
+
+    For each important question:
+    1.	Carefully read the PDF and extract the most important questions that are very likely to appear in the exam.
+	2.	Apply the 80/20 rule focus on the 20% of concepts that will give 80% of the marks.
+	3.	For each important question:
+	•	Write the question in exam style.
+	•	Provide an easy-to-understand answer in very simple language (as if explaining to a beginner).
+	•	Break answers into short sentences, bullet points, or steps so anyone can quickly understand.
+	•	Highlight only the key terms or formulas (keep it minimal).
+	4.	After listing questions, give a summary of the most crucial topics that should be revised first.
+	5.	Make sure the answers are clear, student-friendly, and quick to revise.
+        
+        Notes: 
+{resume_text}
+        """
+        if job_description:
+            base_prompt += f"\nAdditional information for solutions\n{job_description}\n"
+    
     else:
         st.warning("please choose a valid operation!")
     try:
@@ -178,7 +200,7 @@ else:
 
 if uploaded_file:
     try:
-        operation = st.selectbox("What would you like to do:", ['summarize pdf','evaluate resume','Solve Assignment'])
+        operation = st.selectbox("What would you like to do:", ['summarize pdf','evaluate resume','Solve Assignment','Extract Questions'])
         resume_text = extract_pdf_data(uploaded_file)
     except Exception:
         resume_text= "I can not process OCR(image scanned pdfs)"
@@ -196,7 +218,6 @@ if st.button('Analyze'):
         with st.spinner('Analyzing...'):
             analysis = analyze_resume(resume_text, operation, job_description)
             st.write(analysis)
-            print(analysis)
             st.session_state['summary_text'] = analysis
             if analysis.startswith('[Error calling Gemini'):
                 st.error(analysis)
@@ -204,7 +225,7 @@ if st.button('Analyze'):
                 st.success('Analysis complete!')
                 
 
-summary = st.text_area('Enter your summary:', key='summary_text', height=200)
+summary = st.text_area('Enter Markdown or (text):', key='summary_text', height=200)
 
 if st.button('Generate PDF'):
     text_to_pdf = st.session_state.get('summary_text', '')
@@ -214,7 +235,7 @@ if st.button('Generate PDF'):
             st.error('Failed to generate PDF. Please try again.')
         else:
             st.download_button(
-                label='📄 Download Summary as PDF',
+                label='📄 Download PDF',
                 data=pdf_bytes,
                 file_name='summary.pdf',
                 mime='application/pdf'
