@@ -98,6 +98,20 @@ Additional Markdown Rules (to avoid formatting issues):
 - Do not use nested asterisks that can confuse Markdown.
 - Keep structure clean so it converts well to PDF.
 
+Important Markdown Enforcement:
+- Never write answers in a single paragraph with inline asterisks (*).
+- Always put each bullet point on a new line starting with "-".
+- Always add a blank line between paragraphs and sections.
+- Do not use "*" at the start of sentences unless it is a bullet point.
+- Ensure the output is clean Markdown that will render well to PDF.
+
+Line Break Enforcement:
+- Always leave a blank line between different sections.
+- After every heading, insert a blank line.
+- After every list item, start a new line (use "-" at the beginning).
+- Do not write answers as a single long paragraph.
+- Ensure spacing and line breaks render clearly in PDF.
+
 Here is the PDF text:
 {resume_text}
 """
@@ -124,6 +138,20 @@ Additional Markdown Rules (to avoid formatting issues):
 - Format tables clearly using Markdown table syntax with | and ---.
 - Do not use nested asterisks that can confuse Markdown.
 - Keep structure clean so it converts well to PDF.
+
+Important Markdown Enforcement:
+- Never write answers in a single paragraph with inline asterisks (*).
+- Always put each bullet point on a new line starting with "-".
+- Always add a blank line between paragraphs and sections.
+- Do not use "*" at the start of sentences unless it is a bullet point.
+- Ensure the output is clean Markdown that will render well to PDF.
+
+Line Break Enforcement:
+- Always leave a blank line between different sections.
+- After every heading, insert a blank line.
+- After every list item, start a new line (use "-" at the beginning).
+- Do not write answers as a single long paragraph.
+- Ensure spacing and line breaks render clearly in PDF.
 
 Resume:
 {resume_text}
@@ -153,6 +181,20 @@ Resume:
         - Format tables clearly using Markdown table syntax with | and ---.
         - Do not use nested asterisks that can confuse Markdown.
         - Keep structure clean so it converts well to PDF.
+
+        Important Markdown Enforcement:
+        - Never write answers in a single paragraph with inline asterisks (*).
+        - Always put each bullet point on a new line starting with "-".
+        - Always add a blank line between paragraphs and sections.
+        - Do not use "*" at the start of sentences unless it is a bullet point.
+        - Ensure the output is clean Markdown that will render well to PDF.
+
+        Line Break Enforcement:
+        - Always leave a blank line between different sections.
+        - After every heading, insert a blank line.
+        - After every list item, start a new line (use "-" at the beginning).
+        - Do not write answers as a single long paragraph.
+        - Ensure spacing and line breaks render clearly in PDF.
 
         Assignment Text:
         {resume_text}
@@ -191,6 +233,20 @@ Resume:
     - Format tables clearly using Markdown table syntax with | and ---.
     - Do not use nested asterisks that can confuse Markdown.
     - Keep structure clean so it converts well to PDF.
+    
+    Important Markdown Enforcement:
+    - Never write answers in a single paragraph with inline asterisks (*).
+    - Always put each bullet point on a new line starting with "-".
+    - Always add a blank line between paragraphs and sections.
+    - Do not use "*" at the start of sentences unless it is a bullet point.
+    - Ensure the output is clean Markdown that will render well to PDF.
+
+    Line Break Enforcement:
+    - Always leave a blank line between different sections.
+    - After every heading, insert a blank line.
+    - After every list item, start a new line (use "-" at the beginning).
+    - Do not write answers as a single long paragraph.
+    - Ensure spacing and line breaks render clearly in PDF.
         
         Notes: 
 {resume_text}
@@ -210,6 +266,7 @@ Resume:
 from io import BytesIO
 
 def create_pdf(md_text):
+    md_text = md_text.replace("\n", "  \n")
     html_content = markdown.markdown(md_text, extensions=["tables"])
 
     # wrapped markdown in html for better readability
